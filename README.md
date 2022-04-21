@@ -1,8 +1,11 @@
 Features:
 
  Execute using query statement （example： select * from tableName）
+ 
  Support C++ or pure blueprint calls
+ 
  Support MYSQL 5.xx - 8.xx series
+ 
 Code Modules:
 
 
