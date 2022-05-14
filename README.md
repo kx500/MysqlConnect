@@ -9,22 +9,67 @@ Features:
  
  Support C++ or pure blueprint calls
  
- Support MYSQL 5.xx - 8.xx series
+ Synchronous and asynchronous support
+ 
+ Support MYSQL 5.x.x - 8.x.x series
  
  
  
+used in C++
+
+	Mysql = UMysqlConnectSubsystem::Get();
  
-Code Modules:
+	Results = NewObject<UMysqlResult>();
+
+	/////////////////////////// synchronous connection example ///////////////////////////////
+
+	Mysql->Connect("127.0.0.1", 3306, "username", "pw", "TableName", Results);
+	if (!Results->IsSucceed)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MYSQL: ConnectError: %s"), *Results->Msg);
+		return;
+	}
+
+	//Get the total number of rows
+	Mysql->Query("SELECT count(1) FROM `testtable`", Results);
+	UE_LOG(LogTemp, Warning, TEXT("MYSQL: Count: IsSucceed = %d, msg = %s, count = %d"), Results->IsSucceed, *Results->Msg, Results->getCount());
+
+	//get row
+	Mysql->Query("SELECT * FROM `testtable`", Results);
+	UE_LOG(LogTemp, Warning, TEXT("MYSQL: rows: IsSucceed = %d, msg = %s, Num = %d"), Results->IsSucceed, *Results->Msg, Results->getRows().Num());
 
 
+/////////////////////////// Asynchronous connection example ///////////////////////////////
 
-
-Number of Blueprints: 0
-
-Number of C++ Classes: 5
-
-Network Replicated: No
-
-Supported Development Platforms: Win64
-
-Supported Target Build Platforms: windows android Linux
+	const FLatentActionInfo LatentInfo(0, FMath::Rand(), TEXT("ConnectCallback"), this);
+	Mysql->Connect("127.0.0.1", 3306, "username", "pw", "TableName", Results, this, LatentInfo);
+ 
+	//Asynchronous callback function
+    void APluginProjectGameModeBase::ConnectCallback()
+    {
+        if (!Results->IsSucceed)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("MYSQL: ConnectError: %s"), *Results->Msg);
+            return;
+        }
+    
+        //Get the total number of rows
+        const FLatentActionInfo LatentInfo(0, FMath::Rand(), TEXT("fetch_count_Callback"), this);
+        Mysql->Query("SELECT count(1) FROM `testtable`", Results, this, LatentInfo);
+    }
+    
+    //Asynchronous callback function
+    void APluginProjectGameModeBase::fetch_count_Callback()
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MYSQL: Count: IsSucceed = %d, msg = %s, count = %d"), Results->IsSucceed, *Results->Msg, Results->getCount());
+    
+        //get row
+        const FLatentActionInfo LatentInfo(0, FMath::Rand(), TEXT("fetch_rows_Callback"), this);
+        Mysql->Query("SELECT * FROM `testtable`", Results, this, LatentInfo);
+    }
+    
+    //Asynchronous callback function
+    void APluginProjectGameModeBase::fetch_rows_Callback()
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MYSQL: rows: IsSucceed = %d, msg = %s, Num = %d"), Results->IsSucceed, *Results->Msg, Results->getRows().Num());
+    }
