@@ -41,8 +41,12 @@ used in C++
 
 /////////////////////////// Asynchronous connection example ///////////////////////////////
 
+	Mysql = UMysqlConnectSubsystem::Get();
+ 
+	Results = NewObject<UMysqlResult>();
+	
 	const FLatentActionInfo LatentInfo(0, FMath::Rand(), TEXT("ConnectCallback"), this);
-	Mysql->Connect("127.0.0.1", 3306, "username", "pw", "TableName", Results, this, LatentInfo);
+	Mysql->AConnect("127.0.0.1", 3306, "username", "pw", "TableName", Results, this, LatentInfo);
  
 	//Asynchronous callback function
     void APluginProjectGameModeBase::ConnectCallback()
@@ -55,7 +59,7 @@ used in C++
     
         //Get the total number of rows
         const FLatentActionInfo LatentInfo(0, FMath::Rand(), TEXT("fetch_count_Callback"), this);
-        Mysql->Query("SELECT count(1) FROM `testtable`", Results, this, LatentInfo);
+        Mysql->AQuery("SELECT count(1) FROM `testtable`", Results, this, LatentInfo);
     }
     
     //Asynchronous callback function
@@ -65,7 +69,7 @@ used in C++
     
         //get row
         const FLatentActionInfo LatentInfo(0, FMath::Rand(), TEXT("fetch_rows_Callback"), this);
-        Mysql->Query("SELECT * FROM `testtable`", Results, this, LatentInfo);
+        Mysql->AQuery("SELECT * FROM `testtable`", Results, this, LatentInfo);
     }
     
     //Asynchronous callback function
