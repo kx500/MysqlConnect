@@ -55,8 +55,13 @@ used in C++
 
 /////////////////////////// Asynchronous connection example ///////////////////////////////
 
+	#include "MysqlConnectManager.h"
+	#include "MysqlResult.h"
+	
+	UMysqlConnectManager* Mysql;
+	UMysqlResult* Results;
+	
 	Mysql = UMysqlConnectSubsystem::Get();
- 
 	Results = NewObject<UMysqlResult>();
 	
 	const FLatentActionInfo LatentInfo(0, FMath::Rand(), TEXT("ConnectCallback"), this);
