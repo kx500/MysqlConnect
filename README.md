@@ -24,10 +24,13 @@ Support MYSQL 5.x.x - 8.x.x series
 
 
 used in C++
+	#include "MysqlConnectManager.h"
+	#include "MysqlResult.h"
 
-
-	Mysql = UMysqlConnectSubsystem::Get();
- 
+	UMysqlConnectManager* Mysql;
+	UMysqlResult* Results;
+	
+	Mysql = UMysqlConnectManager::CreateMysqlConnectManager();
 	Results = NewObject<UMysqlResult>();
 
 	/////////////////////////// synchronous connection example ///////////////////////////////
